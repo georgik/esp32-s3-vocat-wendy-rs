@@ -1,0 +1,30 @@
+[package]
+name = "desktop-client"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Host tool: turn an image into the ESP-VoCat Wendy network-graphics DSL and send it over the LAN."
+
+# Image decoding uses the well-tested `png` crate (which pulls in flate2/crc32fast
+# for the DEFLATE + CRC work) rather than a hand-written DEFLATE decoder -- the
+# round-panel host tool is not size constrained, and the hand-rolled dynamic-
+# Huffman/distance path kept producing bogus back-reference distances. Talking to
+# the device over the LAN does require TLS though: the firmware's Wendy LAN
+# server (`esp32-s3-vocat-wendy-rs/src/lan.rs`) wraps the socket in a self-signed MbedTLS session
+# (server-auth-only, no client cert) — the same "insecure, server-auth-only" mode
+# the reference Go `litemsg` uses (tls.Dial + InsecureSkipVerify). rustls gives us
+# that on the host with no external binary dependency. Plain TCP is still available
+# via --plain for local testing against a non-TLS listener.
+[dependencies]
+png = "0.18.1"
+libjpeg-turbo-rs = "0.9"
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12", "logging"] }
+
+[[bin]]
+name = "desktop-client"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = "z"
+lto = true
+strip = true

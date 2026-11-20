@@ -1,0 +1,56 @@
+name: Build
+
+# Build both Cargo workspaces on every push / pull request so regressions are
+# caught early.
+#
+#   * The firmware targets the Xtensa ESP32-S3 (`no_std` + `build-std`).
+#   * The host tool (`desktop-client`) builds for the runner's native host.
+#
+# This workflow only *builds* — it never flashes. `cargo build` compiles and
+# links only; the `espflash flash --monitor` runner declared in the firmware's
+# `.cargo/config.toml` is invoked by `cargo run`, not `cargo build`, so there is
+# no device required here.
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "esp32-s3-vocat-wendy-rs/**"
+      - "desktop-client/**"
+      - ".github/workflows/build.yml"
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "esp32-s3-vocat-wendy-rs/**"
+      - "desktop-client/**"
+      - ".github/workflows/build.yml"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build firmware + host tool
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install the Xtensa (esp) toolchain
+        # `espup install` defaults to a toolchain named "esp", which rustup
+        # resolves automatically via `rust-toolchain.toml` (channel = "esp").
+        # The firmware's build.rs then loads the Xtensa GCC from
+        # ~/export-esp.sh, so the build steps below need no extra PATH setup.
+        run: |
+          cargo install espup --locked
+          espup install
+          source ~/export-esp.sh
+          rustup show
+
+      - name: Build firmware (xtensa-esp32s3-none-elf)
+        working-directory: esp32-s3-vocat-wendy-rs
+        run: cargo build --release
+
+      - name: Build host tool (desktop-client)
+        working-directory: desktop-client
+        run: cargo build --release

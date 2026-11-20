@@ -1,0 +1,11 @@
+[package]
+name = "wendy"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "Pure-Rust no_std Wendy link framing (DLE-ESC + frame header) for the ESP-VoCat port."
+
+[dependencies]
+heapless = "0.9.2"
+# Only the critical-section mutex used to guard the captured-stdout ring.
+embassy-sync = "0.6.2"

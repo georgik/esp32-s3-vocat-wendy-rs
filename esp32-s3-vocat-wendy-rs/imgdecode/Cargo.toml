@@ -1,0 +1,11 @@
+[package]
+name = "imgdecode"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "Pure-Rust no_std decoders for the raw-RGB565 image chunks sent over the network to the ESP-VoCat device."
+
+[dependencies]
+# alloc only (via the host std under cfg(test)); never std in firmware.
+
+[dev-dependencies]

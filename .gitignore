@@ -1,0 +1,13 @@
+# Build output (each workspace has its own target/)
+/esp32-s3-vocat-wendy-rs/target/
+/desktop-client/target/
+
+# Auto-generated self-signed cert/key (see build.rs); never commit the pair.
+/esp32-s3-vocat-wendy-rs/src/tls-cert/
+
+# OS / editor
+.DS_Store
+
+wiki/
+Cargo.lock
+
