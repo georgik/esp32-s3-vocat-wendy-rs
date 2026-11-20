@@ -92,6 +92,15 @@ cd esp32-s3-vocat-wendy-rs
 cargo run --release
 ```
 
+## Note
+
+**The monitor owns the serial channel.** `cargo run --release` flashes and then
+**blocks** in `espflash monitor`, holding the USB-Serial/JTAG port. While it is
+running, `wendy device list` cannot open the same port, so the board only ever
+shows up over the LAN. To list the board over USB, stop the monitor first
+(`Ctrl+C` twice, or `Ctrl+]` then `q` to quit the espflash session), release the
+port, and run `wendy device list` in another terminal.
+
 ### Wi-Fi credentials
 
 Wi-Fi is best-effort and only activates when credentials are baked into the

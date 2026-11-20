@@ -50,6 +50,7 @@ embassy-net = { version = "0.9.1", features = [
   "dns",
   "log",
   "medium-ethernet",
+  "multicast",
   "proto-ipv4",
   "tcp",
   "udp",

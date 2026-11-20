@@ -49,6 +49,9 @@ mod wendy_console;
 mod wifi;
 // LAN Wendy server (TCP :5054) on the same stack.
 mod lan;
+// mDNS responder: advertises the board over the LAN so `wendy device list`
+// can browse/resolve it (the wireless counterpart to the USB Wendy link).
+mod mdns;
 // TLS layer: self-signed server cert/key + session config for the
 // MbedTLS session wrapping the LAN socket.
 mod tls;
@@ -589,6 +592,8 @@ async fn main(spawner: Spawner) -> ! {
                     // stack, wrapping each accepted socket in the self-signed
                     // MbedTLS server session.
                     spawner.spawn(lan::lan_server_task(tls, stack).expect("spawn lan server task"));
+                    // mDNS responder so the board is browsable over the LAN.
+                    spawner.spawn(mdns::mdns_task(stack).expect("spawn mdns task"));
                 }
                 Err(e) => warn!("Wi-Fi init failed: {e:?} (continuing on USB only)"),
             },

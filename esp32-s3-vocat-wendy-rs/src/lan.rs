@@ -53,8 +53,9 @@ use wendy::proto::{self, DeviceIdentity, DeviceInfo, Message};
 use crate::tls;
 use crate::wendy_console::put_stdin_data;
 
-/// LAN port the Wendy server listens on — matches `litemsg`'s default.
-const LAN_PORT: u16 = 5054;
+/// LAN port the Wendy server listens on — matches `litemsg`'s default and the
+/// port advertised over mDNS so the host can dial the LAN server.
+pub const LAN_PORT: u16 = 5054;
 
 /// Body cap for the frame assembler (matches the USB task's `BODY_CAP`).
 ///
